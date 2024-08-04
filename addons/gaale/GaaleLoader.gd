@@ -3,15 +3,8 @@
 extends Node
 class_name GaaleLoader
 
-var classes = ClassDB.get_class_list()
-var dict = {}
-
 @export var allow_scripts: bool = false
-@export var node_whitelist: Dictionary = dict
-
-func _ready():
-	for c in classes:
-		dict[c] = false
+@export var node_whitelist: Dictionary = {}
 
 func map_asset(id: String, properties: Dictionary) -> Node:
 	push_error("GaaleLoader.map_asset(id, properties) function not implemented.")
@@ -24,7 +17,29 @@ func map_script(id) -> String:
 	return ""
 
 func construct_node(type, properties):
-	pass
+	var root = ClassDB.instantiate(type)
+	
+	var get_property_names := func lambda(node):
+		var names = []
+		var property_list = node.get_property_list()
+		
+		for property in property_list:
+			names.append(property["name"])
+			
+		return names
+	
+	var property_list = get_property_names.call(root)
+	
+	for property in properties:
+		var property_data = properties[property]
+		var value = property_data["value"]
+		
+		if property_list.has(property):
+			root.set(property, value)
+		else:
+			root.set_meta(property, value)
+	
+	return root
 
 func create_packed_scene(level: Dictionary) -> PackedScene:
 	var packed = PackedScene.new()
@@ -41,7 +56,8 @@ func _create_node(node: Dictionary):
 	if node["id"] != "":
 		node_inst = map_asset(node["id"], node["properties"])
 	else:
-		node_inst = construct_node(node["type"], node["properties"])
+		if node_whitelist.get(node["type"]):
+			node_inst = construct_node(node["type"], node["properties"])
 	
 	if not node_inst:
 		return null

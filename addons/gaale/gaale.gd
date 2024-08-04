@@ -136,7 +136,7 @@ func load_schema(file_path):
 func export_level(file_path):
 	var data = {}
 	
-	# bru
+	var root = get_editor_interface().get_edited_scene_root()
 	
 	var file = FileAccess.open(file_path, FileAccess.WRITE)
 	file.store_string(JSON.stringify(data))
