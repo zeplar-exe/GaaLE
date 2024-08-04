@@ -1,0 +1,3 @@
+# GaaLE (Godot as a Level Editor)
+
+This is an experiement/prototype of a plugin which enables using Godot as a level editor for end users of a Godot application. The primary aim was to investigate the feasibility of utilzing Godot like this. After some tests, I determined that while it's easier to setup compared to a full-fledged application-specific level editor, the implicit editor limitations and levels of abstraction (and disparity) between the game and the level are major cons to implementing this plugin.
